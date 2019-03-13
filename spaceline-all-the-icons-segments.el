@@ -28,7 +28,7 @@
 
 ;;; Forward declarations of Optional Dependencies
 (declare-function projectile-project-root "ext:projectile.el")
-(declare-function yahoo-weather-info-format "ext:yahoo-weather.el")
+(declare-function he-weather-info-format "ext:he-weather.el")
 (declare-function flycheck-count-errors  "ext:flycheck.el")
 (declare-function anzu--format-here-position "ext:anzu.el")
 (declare-function neo-buffer--get-filename-current-line "ext:neotree.el")
@@ -1155,7 +1155,7 @@ Displays HERE and TOTAL to indicate how many search results have been found."
   "Macro to declare `spaceline' segment to TYPE (one of \"sunset\" \"sunrise\") times."
   `(spaceline-define-segment ,(intern (format "all-the-icons-%s" type))
      ,(format "An `all-the-icons' segment to depict the %s time with icons." type)
-     (let* ((time (yahoo-weather-info-format yahoo-weather-info ,(format "%%(%s-time)" type)))
+     (let* ((time (he-weather-info-format he-weather-info ,(format "%%(%s-time)" type)))
             (icon (cdr (assoc (quote ,(intern type)) (spaceline-all-the-icons-icon-set-sun-time))))
 
             (help-echo (format "%s at %s" ,(capitalize type) time))
@@ -1175,25 +1175,25 @@ Displays HERE and TOTAL to indicate how many search results have been found."
         'mouse-face (spaceline-all-the-icons--highlight)))
      :tight t
      :when (and active
-                (bound-and-true-p yahoo-weather-mode)
-                (bound-and-true-p yahoo-weather-info))))
+                (bound-and-true-p he-weather-mode)
+                (bound-and-true-p he-weather-info))))
 
 (define-spaceline-all-the-icons--sun-segment "sunrise")
 (define-spaceline-all-the-icons--sun-segment "sunset")
 
 (defun spaceline-all-the-icons--temperature-color (info)
   "Convert weather INFO into a color temperature Hex Code.
-INFO should be an object similar to `yahoo-weather-info'."
-  (let* ((yahoo-weather-use-F nil)
-         (celsius (string-to-number (yahoo-weather-info-format info "%(temperature)")))
+INFO should be an object similar to `he-weather-info'."
+  (let* ((he-weather-use-F nil)
+         (celsius (string-to-number (he-weather-info-format info "%(temperature)")))
          (normal (max 13 (- 100 (* celsius 4))))
          (clamp (lambda (i) (max 0 (min 255 i))))
          (r (funcall clamp (if (< normal 67)
                                255
-                               (* 329.698727446 (expt (- normal 60) -0.1332047592)))))
+                             (* 329.698727446 (expt (- normal 60) -0.1332047592)))))
          (g (funcall clamp (if (< normal 67)
                                (- (* 99.4708025861 (log normal)) 161.1195681661)
-                               (* 288.1221695283 (expt (- normal 60) -0.0755148492)))))
+                             (* 288.1221695283 (expt (- normal 60) -0.0755148492)))))
          (b (funcall clamp (cond
                             ((> normal 65) 255)
                             ((< normal 20) 0)
@@ -1202,35 +1202,35 @@ INFO should be an object similar to `yahoo-weather-info'."
 
 (spaceline-define-segment all-the-icons-temperature
   "An `all-the-icons' segment to display the current temperature"
-  (let* ((yahoo-weather-temperture-format "%d")
-         (temperature (yahoo-weather-info-format yahoo-weather-info "%(temperature)"))
-         (icon (if yahoo-weather-use-F "°F" "°C"))
+  (let* ((he-weather-temperture-format "%d")
+         (temperature (he-weather-info-format he-weather-info "%(temperature)"))
+         (icon (if he-weather-use-F "°F" "°C"))
 
          (icon-face `(:height ,(spaceline-all-the-icons--height 0.9)
-                      :family ,(all-the-icons-wicon-family)
-                      :foreground ,(spaceline-all-the-icons--temperature-color yahoo-weather-info)
-                      :background ,(spaceline-all-the-icons--face-background 'powerline-active2)))
+                              :family ,(all-the-icons-wicon-family)
+                              :foreground ,(spaceline-all-the-icons--temperature-color he-weather-info)
+                              :background ,(spaceline-all-the-icons--face-background 'powerline-active2)))
          (text-face `(:height ,(spaceline-all-the-icons--height 0.9) :inherit)))
     (propertize
      (concat
       (propertize (all-the-icons-wicon "thermometer-exterior") 'face icon-face)
       (unless spaceline-all-the-icons-slim-render (concat
-                            (propertize " " 'face `(:height ,(spaceline-all-the-icons--height 0.4) :inherit))
-                            (propertize temperature 'face text-face)
-                            (propertize icon 'face text-face))))
+                                                   (propertize " " 'face `(:height ,(spaceline-all-the-icons--height 0.4) :inherit))
+                                                   (propertize temperature 'face text-face)
+                                                   (propertize icon 'face text-face))))
      'help-echo (format "Temperature is currently %s%s" temperature icon)
      'mouse-face (spaceline-all-the-icons--highlight)
      'display '(raise 0.1)))
 
   :tight t
   :when (and active
-             (bound-and-true-p yahoo-weather-mode)
-             (bound-and-true-p yahoo-weather-info)))
+             (bound-and-true-p he-weather-mode)
+             (bound-and-true-p he-weather-info)))
 
 (spaceline-define-segment all-the-icons-weather
   "An `all-the-icons' segment to display an icon for the current weather"
-  (let* ((weather (yahoo-weather-info-format yahoo-weather-info "%(weather)"))
-         (help-echo (format "The weather in `%s' is currently `%s'" yahoo-weather-location weather))
+  (let* ((weather (he-weather-info-format he-weather-info "%(weather)"))
+         (help-echo (format "The weather in `%s' is currently `%s'" he-weather-location weather))
          (icon (all-the-icons-icon-for-weather (downcase weather)))
          (icon-face `(:height ,(spaceline-all-the-icons--height 0.9) :inherit)))
 
@@ -1243,8 +1243,8 @@ INFO should be an object similar to `yahoo-weather-info'."
                 'mouse-face (spaceline-all-the-icons--highlight)))
   :tight t
   :when (and active
-             (bound-and-true-p yahoo-weather-mode)
-             (bound-and-true-p yahoo-weather-info)))
+             (bound-and-true-p he-weather-mode)
+             (bound-and-true-p he-weather-info)))
 
 (spaceline-define-segment all-the-icons-minor-modes
   "An `all-the-icons' segment to display minor modes, prefering to use the diminished values."
