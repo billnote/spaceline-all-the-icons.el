@@ -543,11 +543,13 @@ ICON-SET defaults to `spaceline-all-the-icons-icon-set-window-numbering'."
 
          (have-projectile? (and (fboundp 'projectile-project-p) (projectile-project-p)))
          (show-projectile? (and spaceline-all-the-icons-projectile-p have-projectile?))
+         (full-path? (and (buffer-file-name) (> (frame-parameter nil 'width) (* 3 (length (buffer-file-name))))))
 
          (buffer-id (if (and (buffer-file-name)
-                             (or show-path? show-projectile?))
+                             (or show-path? show-projectile?)
+                             full-path?)
                         (file-name-nondirectory (buffer-file-name))
-                        (format-mode-line "%b")))
+                      (format-mode-line "%b")))
 
          (mouse-f (if have-projectile? 'projectile-find-file 'find-file)))
 
